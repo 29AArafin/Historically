@@ -42,6 +42,7 @@
   let roundInProgress = false;
   let pendingTier = null;
   let pendingAnswer = '';
+  let advanceWhenIdle = false;
   let resizeTimeout = null;
   const roundResults = [];
 
@@ -65,6 +66,10 @@
     onComplete: () => {
       travelCounterEl.hidden = true;
       travelCounterEl.classList.remove('is-rolling');
+      if (advanceWhenIdle) {
+        advanceWhenIdle = false;
+        advanceAfterArrival();
+      }
     },
   });
 
@@ -201,8 +206,17 @@
       answer: pendingAnswer,
       yearText: GameData.formatYear(currentYear),
       delayMs: TIER_REVEAL_DELAY_MS,
-      onContinue: advanceAfterArrival,
+      onContinue: continueAfterReveal,
     });
+  }
+
+  // The arrive phase can outlast the reveal; wait for it so the next jump can start.
+  function continueAfterReveal() {
+    if (travel.state.phase !== 'idle') {
+      advanceWhenIdle = true;
+      return;
+    }
+    advanceAfterArrival();
   }
 
   function advanceAfterArrival() {

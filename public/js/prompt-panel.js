@@ -30,7 +30,7 @@ window.Historically.PromptPanel = (() => {
       if (!onTierContinue) return;
       const callback = onTierContinue;
       onTierContinue = null;
-      tierEl.classList.add('is-leaving');
+      tierEl.classList.replace('is-showing', 'is-leaving');
       tierLeaveTimeout = setTimeout(() => {
         tierLeaveTimeout = null;
         hideLandingTier();
