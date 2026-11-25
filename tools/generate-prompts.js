@@ -300,6 +300,36 @@ async function getRedirects(titles, options) {
   return redirects;
 }
 
+// Optional per-prompt "stripPrefixes" (e.g. ['Battle of ']): also offer the
+// title and every redirect without that prefix, so "Battle of Waterloo"
+// gets "Waterloo". These go through the same checks below, except the
+// length check, so short place names like "Ulm" are kept.
+function withoutPrefixes(texts, prefixes = []) {
+  const extra = [];
+  for (const text of texts) {
+    for (const prefix of prefixes) {
+      if (text.toLowerCase().startsWith(prefix.toLowerCase())) {
+        extra.push(stripDisambiguation(text.slice(prefix.length)));
+      }
+    }
+  }
+  return extra;
+}
+
+// A person's last name ("Columbus" for "Christopher Columbus"), or null.
+// Only for plain names: 2+ words, every word capitalised (so "Leonardo da
+// Vinci", "Thales of Miletus" and battles are skipped) and no regnal number
+// (so "Ramesses II" and "Ptolemy I Soter" are skipped). The surname then goes
+// through the same checks as a redirect, so a shared surname clashes and
+// is dropped.
+function surnameOf(name) {
+  const words = name.split(/\s+/);
+  if (words.length < 2) return null;
+  if (!words.every((word) => /^\p{Lu}/u.test(word))) return null;
+  if (words.some((word) => /^[IVXLC]+\.?$/.test(word))) return null;
+  return words[words.length - 1].replace(/[.,]$/, '');
+}
+
 /*
  * Pick each answer's aliases from its Wikipedia redirects.
  * Everything is compared after normalize(). A redirect is kept only if:
@@ -311,16 +341,22 @@ async function getRedirects(titles, options) {
  * Duplicates within one answer are kept once. Every drop is recorded with its
  * reason in answer.droppedAliases for the review report.
  */
-function chooseAliases(answers, redirects) {
+function chooseAliases(answers, redirects, stripPrefixes, useSurnames = true) {
   // Pass 1: checks that only need the answer itself.
   for (const answer of answers) {
     const ownName = normalize(answer.name);
     answer.candidates = new Map(); // normalised alias -> first spelling seen
     answer.droppedAliases = [];
-    for (const text of redirects.get(answer.title)) {
+    const texts = redirects.get(answer.title);
+    const shortForms = withoutPrefixes([answer.title, ...texts], stripPrefixes);
+    const shortKeys = new Set(shortForms.map(normalize));
+    const surname = useSurnames ? surnameOf(answer.name) : null;
+    for (const text of [...texts, ...shortForms, ...(surname ? [surname] : [])]) {
       const key = normalize(text);
       let reason = null;
-      if (key.length <= MAX_SHORT_ALIAS_LENGTH) reason = 'too short';
+      // Prefix short forms ("Ulm") skip the length check; only empty ones go.
+      const minLength = shortKeys.has(key) ? 1 : MAX_SHORT_ALIAS_LENGTH + 1;
+      if (key.length < minLength) reason = 'too short';
       else if (key.includes('disambiguation')) reason = 'disambiguation';
       else if (key.includes('list of')) reason = 'list of';
       else if (key === ownName) reason = 'same as the name';
@@ -390,7 +426,7 @@ async function buildPrompt(prompt, options, range) {
 
   console.log(`  Fetching redirects for ${answers.length} answers…`);
   const redirects = await getRedirects(answers.map((a) => a.title), options);
-  chooseAliases(answers, redirects);
+  chooseAliases(answers, redirects, prompt.stripPrefixes, prompt.surnames !== false);
 
   return { prompt, answers, cutByMax, skippedNoArticle };
 }
