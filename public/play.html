@@ -49,10 +49,20 @@
     </div>
 
     <!-- Landing title card: rarity tier, era and destination year -->
-    <div id="landing-tier" class="landing-tier" hidden aria-hidden="true">
-      <p id="landing-tier-title" class="landing-tier__title"></p>
-      <p id="landing-tier-era" class="landing-tier__era"></p>
-      <p id="landing-tier-meta" class="landing-tier__meta"></p>
+    <div id="landing-tier" class="landing-tier" hidden role="dialog" aria-labelledby="landing-tier-name" aria-describedby="landing-tier-body">
+      <p id="landing-tier-name" class="landing-tier__name"></p>
+      <div id="landing-tier-body">
+        <p id="landing-tier-answer" class="landing-tier__answer"></p>
+        <p class="landing-tier__score">
+          <span id="landing-tier-points" class="landing-tier__points"></span>
+          <span aria-hidden="true">·</span>
+          <span id="landing-tier-travel" class="landing-tier__travel"></span>
+        </p>
+        <p id="landing-tier-year" class="landing-tier__year"></p>
+        <p id="landing-tier-era" class="landing-tier__era"></p>
+        <p id="landing-tier-flavour" class="landing-tier__flavour"></p>
+      </div>
+      <button id="landing-tier-continue" class="landing-tier__continue" type="button">Continue</button>
     </div>
 
     <!-- Bottom-docked answer input with thin pixel timer bar on top edge -->

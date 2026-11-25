@@ -424,68 +424,203 @@ body {
   50% { transform: translateX(2px); }
 }
 
+/* Tier reveal card: dark translucent panel so it reads on any backdrop. */
 .landing-tier {
+  --tier-color: var(--p-mist);
   position: fixed;
   left: 50%;
-  top: 40%;
+  top: 14%;
   z-index: 34;
-  width: min(90vw, 38rem);
-  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 1.5rem), 34rem);
+  max-height: calc(100dvh - 5.5rem);
+  overflow-y: auto;
+  padding: 1.1rem 1rem 1rem;
+  border: 2px solid var(--tier-color);
+  border-radius: 14px;
+  background: rgba(8, 12, 30, 0.82);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 0 24px color-mix(in srgb, var(--tier-color) 35%, transparent),
+    0 10px 28px rgba(0, 0, 0, 0.55);
+  transform: translateX(-50%);
   text-align: center;
-  pointer-events: none;
+  color: var(--p-cream);
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.9),
+    0 0 4px rgba(0, 0, 0, 0.85);
+  opacity: 0;
 }
+
+/* Tier text colours: lightened tier hues, >= 4.5:1 on the panel even over white. */
+.landing-tier[data-tier="common"] { --tier-color: #8cb8ff; }
+.landing-tier[data-tier="well"] { --tier-color: #6fd8cb; }
+.landing-tier[data-tier="scholar"] { --tier-color: var(--p-brass); }
+.landing-tier[data-tier="archivist"] { --tier-color: #ff9f6b; }
+.landing-tier[data-tier="lost"] { --tier-color: #ff8a8a; }
+.landing-tier[data-tier="timeout"] { --tier-color: var(--p-mist); }
 
 .landing-tier[hidden] {
   display: none;
 }
 
 .landing-tier.is-showing {
-  animation: title-card-in 0.3s steps(5, end) forwards;
+  opacity: 1;
+  animation: tier-card-in 0.5s ease-out both;
 }
 
-@keyframes title-card-in {
-  0% {
+.landing-tier.is-leaving {
+  opacity: 0;
+  animation: tier-card-out 0.25s ease-in both;
+}
+
+@keyframes tier-card-in {
+  from {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 10px));
+    transform: translate(-50%, 10px) scale(0.97);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0) scale(1);
   }
 }
 
-/* Chromatic aberration allowed on result text */
-.landing-tier__title {
-  margin: 0 0 0.4rem;
+@keyframes tier-card-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes tier-card-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.landing-tier__name {
+  margin: 0 0 0.55rem;
   font-family: var(--font-pixel-display);
-  font-size: clamp(0.68rem, 2.1vw, 0.82rem);
-  letter-spacing: 0.24em;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 6.4vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--p-gold);
-  text-shadow: 0 2px 0 var(--p-ink);
+  overflow-wrap: break-word;
+  color: var(--tier-color);
+  text-shadow:
+    0 2px 0 #000,
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 0 18px color-mix(in srgb, var(--tier-color) 60%, transparent);
+}
+
+.landing-tier__answer {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-pixel-body);
+  font-size: clamp(1.45rem, 4.6vw, 1.85rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  color: var(--p-cream);
+}
+
+.landing-tier__score {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.5em;
+  margin: 0 0 0.7rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.85rem, 2.9vw, 1.05rem);
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+
+.landing-tier__points {
+  font-weight: 700;
+  color: var(--tier-color);
+}
+
+.landing-tier__year {
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.85rem, 2.9vw, 1.05rem);
+  letter-spacing: 0.06em;
+  color: #fff;
 }
 
 .landing-tier__era {
-  margin: 0 0 0.35rem;
+  margin: 0.2rem 0 0.6rem;
   font-family: var(--font-pixel-display);
-  font-size: clamp(1.35rem, 5.4vw, 2.65rem);
-  line-height: 1.05;
+  font-weight: 700;
+  font-size: clamp(1.05rem, 4vw, 1.6rem);
+  line-height: 1.1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--p-cream);
-  text-shadow:
-    -2px 0 0 var(--p-pink),
-    2px 0 0 var(--p-cyan),
-    0 3px 0 var(--p-ink);
 }
 
-.landing-tier__meta {
-  margin: 0;
+.landing-tier__flavour {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-pixel-body);
+  font-size: clamp(1.1rem, 3.6vw, 1.3rem);
+  line-height: 1.15;
+  color: #b9c7d4;
+}
+
+.landing-tier__continue {
+  min-height: 44px;
+  padding: 0.55rem 1.4rem 0.5rem;
+  border: 2px solid var(--tier-color);
+  border-radius: 8px;
+  background: var(--tier-color);
   font-family: var(--font-pixel-display);
-  font-size: clamp(0.64rem, 1.9vw, 0.8rem);
-  letter-spacing: 0.1em;
-  color: var(--p-mist);
-  text-shadow: 0 2px 0 var(--p-ink);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #080c1e;
+  text-shadow: none;
+  cursor: pointer;
+}
+
+.landing-tier__continue:hover {
+  filter: brightness(1.1);
+}
+
+.landing-tier__continue:focus-visible {
+  outline: 3px solid var(--p-cream);
+  outline-offset: 3px;
+}
+
+/* Phones: tighter spacing so the card stays above the machine. */
+@media (max-width: 480px) {
+  .landing-tier {
+    padding: 0.75rem 0.8rem 0.8rem;
+  }
+
+  .landing-tier__name {
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.06em;
+  }
+
+  .landing-tier__answer {
+    margin-bottom: 0.3rem;
+    font-size: 1.35rem;
+  }
+
+  .landing-tier__score {
+    margin-bottom: 0.4rem;
+  }
+
+  .landing-tier__era {
+    margin: 0.1rem 0 0.4rem;
+    font-size: 1rem;
+  }
+
+  .landing-tier__flavour {
+    margin-bottom: 0.55rem;
+    font-size: 1.1rem;
+  }
+
+  .landing-tier__continue {
+    padding-block: 0.35rem 0.3rem;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -646,9 +781,12 @@ body {
   .prompt-anchor.is-entering,
   .answer-timer-meta.is-urgent,
   .timer-fill.is-urgent,
-  .travel-counter.is-rolling .travel-counter__year,
-  .landing-tier.is-showing {
+  .travel-counter.is-rolling .travel-counter__year {
     animation: none;
+  }
+
+  .landing-tier.is-showing {
+    animation: tier-card-fade-in 0.5s ease-out both;
   }
 
   .fade-curtain {
