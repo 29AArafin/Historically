@@ -300,6 +300,21 @@ async function getRedirects(titles, options) {
   return redirects;
 }
 
+// Optional per-prompt "stripPrefixes" (e.g. ['Battle of ']): also offer the
+// title and every redirect without that prefix, so "Battle of Waterloo"
+// gets "Waterloo". These go through exactly the same checks below.
+function withoutPrefixes(texts, prefixes = []) {
+  const extra = [];
+  for (const text of texts) {
+    for (const prefix of prefixes) {
+      if (text.toLowerCase().startsWith(prefix.toLowerCase())) {
+        extra.push(stripDisambiguation(text.slice(prefix.length)));
+      }
+    }
+  }
+  return extra;
+}
+
 /*
  * Pick each answer's aliases from its Wikipedia redirects.
  * Everything is compared after normalize(). A redirect is kept only if:
@@ -311,13 +326,15 @@ async function getRedirects(titles, options) {
  * Duplicates within one answer are kept once. Every drop is recorded with its
  * reason in answer.droppedAliases for the review report.
  */
-function chooseAliases(answers, redirects) {
+function chooseAliases(answers, redirects, stripPrefixes) {
   // Pass 1: checks that only need the answer itself.
   for (const answer of answers) {
     const ownName = normalize(answer.name);
     answer.candidates = new Map(); // normalised alias -> first spelling seen
     answer.droppedAliases = [];
-    for (const text of redirects.get(answer.title)) {
+    const texts = redirects.get(answer.title);
+    const shortForms = withoutPrefixes([answer.title, ...texts], stripPrefixes);
+    for (const text of [...texts, ...shortForms]) {
       const key = normalize(text);
       let reason = null;
       if (key.length <= MAX_SHORT_ALIAS_LENGTH) reason = 'too short';
@@ -390,7 +407,7 @@ async function buildPrompt(prompt, options, range) {
 
   console.log(`  Fetching redirects for ${answers.length} answers…`);
   const redirects = await getRedirects(answers.map((a) => a.title), options);
-  chooseAliases(answers, redirects);
+  chooseAliases(answers, redirects, prompt.stripPrefixes);
 
   return { prompt, answers, cutByMax, skippedNoArticle };
 }
