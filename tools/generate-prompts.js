@@ -316,6 +316,20 @@ function withoutPrefixes(texts, prefixes = []) {
   return extra;
 }
 
+// A person's last name ("Columbus" for "Christopher Columbus"), or null.
+// Only for plain names: 2+ words, every word capitalised (so "Leonardo da
+// Vinci", "Thales of Miletus" and battles are skipped) and no regnal number
+// (so "Ramesses II" and "Ptolemy I Soter" are skipped). The surname then goes
+// through the same checks as a redirect, so a shared surname clashes and
+// is dropped.
+function surnameOf(name) {
+  const words = name.split(/\s+/);
+  if (words.length < 2) return null;
+  if (!words.every((word) => /^\p{Lu}/u.test(word))) return null;
+  if (words.some((word) => /^[IVXLC]+\.?$/.test(word))) return null;
+  return words[words.length - 1].replace(/[.,]$/, '');
+}
+
 /*
  * Pick each answer's aliases from its Wikipedia redirects.
  * Everything is compared after normalize(). A redirect is kept only if:
@@ -336,7 +350,8 @@ function chooseAliases(answers, redirects, stripPrefixes) {
     const texts = redirects.get(answer.title);
     const shortForms = withoutPrefixes([answer.title, ...texts], stripPrefixes);
     const shortKeys = new Set(shortForms.map(normalize));
-    for (const text of [...texts, ...shortForms]) {
+    const surname = surnameOf(answer.name);
+    for (const text of [...texts, ...shortForms, ...(surname ? [surname] : [])]) {
       const key = normalize(text);
       let reason = null;
       // Prefix short forms ("Ulm") skip the length check; only empty ones go.
