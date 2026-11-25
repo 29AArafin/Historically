@@ -4,32 +4,6 @@
 
 window.Historically = window.Historically || {};
 
-window.Historically.PALETTE = {
-  skyTop: '#6ea8d9',
-  skyMid: '#a8d0e6',
-  skyHorizon: '#f5e2c4',
-  sunCore: '#ffe885',
-  sunGlow: '#f7c55c',
-  cloudLight: '#fff8eb',
-  cloudShade: '#d8e4ed',
-  grassLight: '#6ab04c',
-  grassDark: '#3d7a37',
-  leafDark: '#27592d',
-  flowerPink: '#f06595',
-  brassLight: '#e6c27a',
-  brassMid: '#b88940',
-  steelMid: '#7c8b99',
-  steelDark: '#44505e',
-  ink: '#1a1d26',
-  cyanBright: '#72f5ff',
-  cyanMid: '#26b6c9',
-  dirtTop: '#7a5234',
-  strataMid: '#593a27',
-  strataDeep: '#3b251c',
-  pottery: '#b55d42',
-  strataVoid: '#140d12',
-};
-
 window.Historically.GameData = (() => {
   'use strict';
 
@@ -156,8 +130,11 @@ window.Historically.GameData = (() => {
   }
 
   function formatYear(year) {
-    if (year <= 0) {
-      return `${Math.abs(year) + 1} BCE`;
+    if (year < 0) {
+      return `${Math.abs(year)} BCE`;
+    }
+    if (year === 0) {
+      return '1 BCE';
     }
     return `${year} CE`;
   }

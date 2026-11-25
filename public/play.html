@@ -10,15 +10,25 @@
   <link rel="stylesheet" href="css/play.css">
 </head>
 <body>
-  <!-- Full-screen procedural pixel-art world stage -->
+  <!-- Full-screen grounded era stage -->
   <div id="world-stage" class="world-stage">
     <canvas id="world-canvas" class="world-canvas" aria-hidden="true"></canvas>
 
-    <!-- Tiny corner HUD: round counter top-left, logo center, score top-right -->
+    <!-- Tiny corner HUD: round counter, current year + era, score and sound -->
     <nav class="game-hud" aria-label="Game status">
       <span id="hud-round" class="hud-round">1/7</span>
-      <a class="hud-logo" href="index.html" aria-label="Back to home">HISTORICALLY</a>
-      <span id="hud-score" class="hud-score">SCORE 0</span>
+      <div class="hud-center">
+        <a class="hud-logo" href="index.html" aria-label="Back to home">HISTORICALLY</a>
+        <p class="hud-era">
+          <span id="hud-year">2026 CE</span>
+          <span class="hud-era__sep" aria-hidden="true">·</span>
+          <span id="hud-era-name">DIGITAL AGE</span>
+        </p>
+      </div>
+      <div class="hud-right">
+        <span id="hud-score" class="hud-score">SCORE 0</span>
+        <button id="mute-toggle" class="hud-mute" type="button" aria-pressed="false">SFX ON</button>
+      </div>
     </nav>
 
     <!-- In-world floating prompt panel (notched pixel corners, scanline texture) -->
@@ -27,17 +37,21 @@
         <div class="prompt-panel">
           <p id="prompt-label" class="prompt-label">PROMPT 1 OF 7</p>
           <h1 id="prompt-question" class="prompt-question">Loading…</h1>
-          <p class="prompt-hint">▼ rarer answers go further back ▼</p>
+          <p class="prompt-hint">rarer answers travel further back</p>
         </div>
       </div>
     </div>
 
-    <!-- Falling answer chip (animated downward after submit) -->
-    <div id="falling-chip" class="falling-chip" hidden aria-hidden="true"></div>
+    <!-- Large rolling year counter during a jump -->
+    <div id="travel-counter" class="travel-counter" hidden aria-hidden="true">
+      <span id="travel-counter-year" class="travel-counter__year">2026</span>
+      <span id="travel-counter-suffix" class="travel-counter__suffix">CE</span>
+    </div>
 
-    <!-- Landing rarity tier label (shown briefly at the new depth) -->
+    <!-- Landing title card: rarity tier, era and destination year -->
     <div id="landing-tier" class="landing-tier" hidden aria-hidden="true">
       <p id="landing-tier-title" class="landing-tier__title"></p>
+      <p id="landing-tier-era" class="landing-tier__era"></p>
       <p id="landing-tier-meta" class="landing-tier__meta"></p>
     </div>
 
@@ -73,10 +87,24 @@
   <div class="crt-scanlines" aria-hidden="true"></div>
   <div id="fade-curtain" class="fade-curtain" aria-hidden="true"></div>
 
-  <!-- Modular scripts: data → camera → canvas → hud → panel → game loop -->
+  <!-- Modular scripts: data → era art → renderer → travel → HUD → game loop -->
   <script src="js/game-data.js"></script>
-  <script src="js/camera.js"></script>
-  <script src="js/world-canvas.js"></script>
+  <script src="js/eras/era-utils.js"></script>
+  <script src="js/eras/01-digital.js"></script>
+  <script src="js/eras/02-cold-war.js"></script>
+  <script src="js/eras/03-world-wars.js"></script>
+  <script src="js/eras/04-industrial.js"></script>
+  <script src="js/eras/05-revolutions.js"></script>
+  <script src="js/eras/06-renaissance.js"></script>
+  <script src="js/eras/07-medieval.js"></script>
+  <script src="js/eras/08-classical.js"></script>
+  <script src="js/eras/09-bronze-age.js"></script>
+  <script src="js/eras/10-prehistory.js"></script>
+  <script src="js/eras/eras-config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/time-machine.js"></script>
+  <script src="js/time-travel.js"></script>
+  <script src="js/scene-renderer.js"></script>
   <script src="js/hud.js"></script>
   <script src="js/prompt-panel.js"></script>
   <script src="js/game-loop.js"></script>

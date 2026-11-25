@@ -106,10 +106,16 @@ body {
   right: 0;
   z-index: 30;
   padding-inline: clamp(0.85rem, 3vw, 1.5rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 0.75rem;
   pointer-events: none;
+}
+
+.hud-round {
+  justify-self: start;
+  padding-top: 0.1rem;
 }
 
 .hud-round,
@@ -117,6 +123,7 @@ body {
   font-family: var(--font-pixel-display);
   font-size: clamp(0.72rem, 2vw, 0.88rem);
   letter-spacing: 0.08em;
+  white-space: nowrap;
   color: var(--p-cream);
   text-shadow:
     0 2px 0 var(--p-ink),
@@ -130,11 +137,19 @@ body {
     0 0 10px rgba(255, 232, 133, 0.45);
 }
 
+.hud-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
 /* Small logo with chromatic aberration (only logo & result text get this) */
 .hud-logo {
   pointer-events: auto;
   font-family: var(--font-pixel-display);
-  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  font-size: clamp(0.64rem, 1.8vw, 0.82rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-decoration: none;
@@ -143,6 +158,73 @@ body {
     -2px 0 0 var(--p-pink),
     2px 0 0 var(--p-cyan),
     0 2px 0 var(--p-ink);
+}
+
+.hud-era {
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.55rem, 1.6vw, 0.68rem);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  color: var(--p-mist);
+  text-shadow:
+    0 2px 0 var(--p-ink),
+    0 0 8px rgba(20, 13, 18, 0.8);
+}
+
+#hud-year {
+  color: var(--p-gold);
+}
+
+#hud-era-name {
+  color: var(--p-cyan);
+}
+
+.hud-era__sep {
+  padding-inline: 0.3em;
+  color: var(--p-steel-mid);
+}
+
+.hud-right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.45rem, 1.4vw, 0.8rem);
+}
+
+.hud-mute {
+  pointer-events: auto;
+  appearance: none;
+  padding: 0.28rem 0.46rem 0.24rem;
+  border: 1px solid rgba(216, 228, 237, 0.55);
+  background-color: rgba(20, 13, 18, 0.62);
+  color: var(--p-cream);
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.48rem, 1.4vw, 0.58rem);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  clip-path: polygon(
+    4px 0%, calc(100% - 4px) 0%, calc(100% - 4px) 2px, calc(100% - 2px) 2px,
+    calc(100% - 2px) 4px, 100% 4px, 100% calc(100% - 4px),
+    calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 4px) calc(100% - 2px), calc(100% - 4px) 100%, 4px 100%,
+    4px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 4px),
+    0% calc(100% - 4px), 0% 4px, 2px 4px, 2px 2px, 4px 2px
+  );
+}
+
+.hud-mute:hover,
+.hud-mute:focus-visible {
+  color: var(--p-ink);
+  background-color: var(--p-cyan);
+  outline: none;
+}
+
+.hud-mute.is-muted {
+  color: var(--p-steel-mid);
+  border-color: rgba(124, 139, 153, 0.45);
 }
 
 .hud-logo:focus-visible {
@@ -290,56 +372,64 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Falling Answer Chip & Landing Rarity Label
+   Large Rolling Year Counter & Landing Title Card
    -------------------------------------------------------------------------- */
-.falling-chip {
+.travel-counter {
   position: fixed;
+  top: clamp(6.5rem, 15vh, 10rem);
   left: 50%;
-  top: 50%;
-  z-index: 22;
-  padding: 0.35rem 0.85rem;
-  font-family: var(--font-pixel-display);
-  font-size: clamp(0.75rem, 2.3vw, 0.92rem);
-  color: var(--p-ink);
-  background-color: var(--p-gold);
-  border: 2px solid var(--p-cream);
-  box-shadow: 0 4px 0 var(--p-ink);
-  transform: translate(-50%, -50%);
+  z-index: 34;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.22em;
+  transform: translateX(-50%);
+  text-align: center;
   pointer-events: none;
   white-space: nowrap;
-  max-width: 82vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.falling-chip[hidden] {
+.travel-counter[hidden] {
   display: none;
 }
 
-.falling-chip.is-falling {
-  animation: chip-drop 1.15s steps(12, end) forwards;
+.travel-counter__year {
+  font-family: var(--font-pixel-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 8vw, 5.2rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--p-cream);
+  text-shadow:
+    -3px 0 0 var(--p-pink),
+    3px 0 0 var(--p-cyan),
+    0 4px 0 var(--p-ink),
+    0 0 22px rgba(114, 245, 255, 0.5);
 }
 
-@keyframes chip-drop {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-  75% {
-    opacity: 1;
-    transform: translate(-50%, 60px);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, 96px);
-  }
+.travel-counter__suffix {
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.85rem, 2.7vw, 1.35rem);
+  letter-spacing: 0.08em;
+  color: var(--p-cyan);
+  text-shadow: 0 2px 0 var(--p-ink);
+}
+
+.travel-counter.is-rolling .travel-counter__year {
+  animation: year-roll-flicker 0.12s steps(2, end) infinite;
+}
+
+@keyframes year-roll-flicker {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
 }
 
 .landing-tier {
   position: fixed;
   left: 50%;
-  top: 44%;
-  z-index: 24;
+  top: 40%;
+  z-index: 34;
+  width: min(90vw, 38rem);
   transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none;
@@ -349,12 +439,38 @@ body {
   display: none;
 }
 
+.landing-tier.is-showing {
+  animation: title-card-in 0.3s steps(5, end) forwards;
+}
+
+@keyframes title-card-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 10px));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
 /* Chromatic aberration allowed on result text */
 .landing-tier__title {
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.4rem;
   font-family: var(--font-pixel-display);
-  font-size: clamp(1rem, 3.6vw, 1.45rem);
-  letter-spacing: 0.08em;
+  font-size: clamp(0.68rem, 2.1vw, 0.82rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  text-shadow: 0 2px 0 var(--p-ink);
+}
+
+.landing-tier__era {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(1.35rem, 5.4vw, 2.65rem);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--p-cream);
   text-shadow:
@@ -366,8 +482,9 @@ body {
 .landing-tier__meta {
   margin: 0;
   font-family: var(--font-pixel-display);
-  font-size: clamp(0.68rem, 2vw, 0.82rem);
-  color: var(--p-gold);
+  font-size: clamp(0.64rem, 1.9vw, 0.8rem);
+  letter-spacing: 0.1em;
+  color: var(--p-mist);
   text-shadow: 0 2px 0 var(--p-ink);
 }
 
@@ -527,13 +644,69 @@ body {
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .prompt-anchor.is-entering,
-  .falling-chip.is-falling,
   .answer-timer-meta.is-urgent,
-  .timer-fill.is-urgent {
+  .timer-fill.is-urgent,
+  .travel-counter.is-rolling .travel-counter__year,
+  .landing-tier.is-showing {
     animation: none;
   }
 
   .fade-curtain {
     transition: none;
+  }
+}
+
+/* Short screens: tighten the prompt so it clears the machine and portal. */
+@media (max-height: 700px) {
+  .prompt-anchor {
+    width: min(90vw, 30rem);
+  }
+
+  .prompt-panel {
+    padding: 0.7rem 1.1rem 0.75rem;
+  }
+
+  .prompt-label {
+    margin-bottom: 0.3rem;
+    font-size: 0.6rem;
+  }
+
+  .prompt-question {
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.2rem, 4vw, 1.7rem);
+  }
+
+  .prompt-hint {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .game-hud {
+    gap: 0.4rem;
+    padding-inline: 0.7rem;
+  }
+
+  .hud-logo {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hud-era {
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+  }
+
+  .hud-score {
+    font-size: 0.62rem;
+  }
+
+  .hud-mute {
+    font-size: 0.44rem;
+    padding: 0.22rem 0.3rem 0.2rem;
+  }
+
+  .travel-counter {
+    top: 5.4rem;
   }
 }

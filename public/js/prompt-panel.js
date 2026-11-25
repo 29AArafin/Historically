@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Historically — In-World Prompt Panel, Falling Chip & Landing Tier Label
+   Historically — In-World Prompt Panel & Era Title Card
    ========================================================================== */
 
 window.Historically = window.Historically || {};
@@ -11,9 +11,9 @@ window.Historically.PromptPanel = (() => {
     const anchorEl = document.getElementById('prompt-anchor');
     const labelEl = document.getElementById('prompt-label');
     const questionEl = document.getElementById('prompt-question');
-    const chipEl = document.getElementById('falling-chip');
     const tierEl = document.getElementById('landing-tier');
     const tierTitleEl = document.getElementById('landing-tier-title');
+    const tierEraEl = document.getElementById('landing-tier-era');
     const tierMetaEl = document.getElementById('landing-tier-meta');
 
     let panelVisible = false;
@@ -22,11 +22,11 @@ window.Historically.PromptPanel = (() => {
       labelEl.textContent = `PROMPT ${roundNum} OF ${totalRounds}`;
       questionEl.textContent = questionText;
       tierEl.hidden = true;
+      tierEl.classList.remove('is-showing');
       panelVisible = true;
 
       anchorEl.classList.remove('is-hidden', 'is-entering');
       if (!reduceMotion) {
-        // Trigger stepped fade-in cleanly
         void anchorEl.offsetWidth;
         anchorEl.classList.add('is-entering');
       }
@@ -38,39 +38,33 @@ window.Historically.PromptPanel = (() => {
       anchorEl.classList.add('is-hidden');
     }
 
-    function launchFallingChip(answerText, startY, reduceMotion) {
-      if (reduceMotion || !answerText) return;
-      chipEl.textContent = answerText;
-      chipEl.style.top = `${Math.round(startY)}px`;
-      chipEl.hidden = false;
-      chipEl.classList.remove('is-falling');
-      void chipEl.offsetWidth;
-      chipEl.classList.add('is-falling');
-
-      setTimeout(() => {
-        chipEl.hidden = true;
-        chipEl.classList.remove('is-falling');
-      }, 1150);
-    }
-
-    function showLandingTier(tier, yearText, centerY) {
-      tierTitleEl.textContent = tier.shortLabel;
-      tierMetaEl.textContent =
-        tier.points > 0 ? `+${tier.points} PTS · ${yearText}` : `0 PTS · ${yearText}`;
-      tierEl.style.top = `${Math.round(centerY)}px`;
+    function showLandingTier(tier, era, yearText, reduceMotion) {
+      tierTitleEl.textContent = tier.points > 0 ? `${tier.shortLabel} · +${tier.points} PTS` : tier.shortLabel;
+      tierEraEl.textContent = era.name;
+      tierMetaEl.textContent = `${yearText} · ${era.yearRange}`;
       tierEl.hidden = false;
+      tierEl.classList.remove('is-showing');
+      if (!reduceMotion) {
+        void tierEl.offsetWidth;
+        tierEl.classList.add('is-showing');
+      }
     }
 
     function hideLandingTier() {
       tierEl.hidden = true;
+      tierEl.classList.remove('is-showing');
     }
 
-    // Keep panel anchored to world depth while staying clear of HUD & mobile keyboard
-    function updatePosition(desiredY, availableBottomY) {
+    // Keep the panel in the sky above the machine and clear of HUD / keyboard.
+    function updatePosition(desiredY, availableBottomY, avoidTopY) {
       if (!panelVisible) return;
       const panelH = anchorEl.offsetHeight || 150;
-      const minY = 58 + panelH / 2;
-      const maxY = Math.max(minY, availableBottomY - panelH / 2 - 14);
+      const minY = 92 + panelH / 2;
+      const dockMax = availableBottomY - panelH / 2 - 14;
+      const machineMax = Number.isFinite(avoidTopY)
+        ? avoidTopY - panelH / 2 - 12
+        : Infinity;
+      const maxY = Math.max(minY, Math.min(dockMax, machineMax));
       const clampedY = Math.max(minY, Math.min(maxY, desiredY));
       anchorEl.style.top = `${Math.round(clampedY)}px`;
     }
@@ -78,7 +72,6 @@ window.Historically.PromptPanel = (() => {
     return {
       showPrompt,
       snapShut,
-      launchFallingChip,
       showLandingTier,
       hideLandingTier,
       updatePosition,

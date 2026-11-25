@@ -10,6 +10,8 @@ window.Historically.Hud = (() => {
   function createHud({ roundSeconds, onSubmit, onTimeout }) {
     const roundEl = document.getElementById('hud-round');
     const scoreEl = document.getElementById('hud-score');
+    const yearEl = document.getElementById('hud-year');
+    const eraNameEl = document.getElementById('hud-era-name');
     const timerMetaEl = document.getElementById('timer-meta');
     const timerClockEl = document.getElementById('timer-clock');
     const timerFillEl = document.getElementById('timer-fill');
@@ -24,6 +26,12 @@ window.Historically.Hud = (() => {
     function updateStatus(roundNum, totalRounds, score) {
       roundEl.textContent = `${roundNum}/${totalRounds}`;
       scoreEl.textContent = `SCORE ${score}`;
+    }
+
+    function updateEra(yearText, eraName, shortName) {
+      yearEl.textContent = yearText;
+      const compact = window.innerWidth <= 640;
+      eraNameEl.textContent = (compact && shortName ? shortName : eraName).toUpperCase();
     }
 
     function setInputEnabled(enabled) {
@@ -105,6 +113,7 @@ window.Historically.Hud = (() => {
 
     return {
       updateStatus,
+      updateEra,
       setInputEnabled,
       clearInput,
       startTimer,
