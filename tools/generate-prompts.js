@@ -35,7 +35,7 @@ const crypto = require('crypto');
 // ---------------------------------------------------------------------------
 
 // Wikimedia asks every script to identify itself. Put your email in here.
-const USER_AGENT = 'Historically/0.1 (contact: YOUR_EMAIL_HERE)';
+const USER_AGENT = 'Historically/0.1 (contact: 29aarafin@gmail.com)';
 
 // Tier bands, from most-viewed to least-viewed. Percentages must add up to 100.
 const TIER_BANDS = [
@@ -501,7 +501,7 @@ async function main() {
     return;
   }
   if (typeof fetch !== 'function') throw new Error('This script needs Node.js 18 or later (built-in fetch).');
-  if (USER_AGENT.includes('YOUR_EMAIL_HERE')) {
+  if (USER_AGENT.includes('29aarafin@gmail.com')) {
     console.warn('Note: put your email in USER_AGENT at the top of tools/generate-prompts.js.');
   }
   checkTierBands();
