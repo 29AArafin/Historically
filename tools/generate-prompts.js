@@ -501,7 +501,7 @@ async function main() {
     return;
   }
   if (typeof fetch !== 'function') throw new Error('This script needs Node.js 18 or later (built-in fetch).');
-  if (USER_AGENT.includes('29aarafin@gmail.com')) {
+  if (USER_AGENT.includes('YOUR_EMAIL_HERE')) {
     console.warn('Note: put your email in USER_AGENT at the top of tools/generate-prompts.js.');
   }
   checkTierBands();
