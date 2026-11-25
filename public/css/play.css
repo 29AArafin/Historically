@@ -757,6 +757,38 @@ body {
   outline: none;
 }
 
+/* Rejected-answer message under the input */
+.answer-feedback {
+  margin: 0.45rem 0 0;
+  padding: 0.4rem 0.85rem 0.35rem;
+  border: 2px solid var(--p-pink);
+  border-radius: 8px;
+  background: rgba(8, 12, 30, 0.88);
+  font-family: var(--font-pixel-body);
+  font-size: clamp(1.15rem, 3.4vw, 1.3rem);
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: var(--p-cream);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.9);
+}
+
+.answer-feedback[hidden] {
+  display: none;
+}
+
+.answer-frame.is-shaking {
+  animation: answer-shake 0.36s ease-in-out;
+}
+
+@keyframes answer-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
 .answer-frame:focus-within {
   background-color: var(--p-cyan);
 }
@@ -781,7 +813,8 @@ body {
   .prompt-anchor.is-entering,
   .answer-timer-meta.is-urgent,
   .timer-fill.is-urgent,
-  .travel-counter.is-rolling .travel-counter__year {
+  .travel-counter.is-rolling .travel-counter__year,
+  .answer-frame.is-shaking {
     animation: none;
   }
 

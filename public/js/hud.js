@@ -18,6 +18,8 @@ window.Historically.Hud = (() => {
     const formEl = document.getElementById('answer-form');
     const inputEl = document.getElementById('answer-input');
     const dockEl = document.getElementById('answer-dock');
+    const frameEl = dockEl.querySelector('.answer-frame');
+    const feedbackEl = document.getElementById('answer-feedback');
 
     let timerEndMs = 0;
     let timerRunning = false;
@@ -38,11 +40,30 @@ window.Historically.Hud = (() => {
       inputEl.disabled = !enabled;
       if (enabled) {
         inputEl.focus({ preventScroll: true });
+      } else {
+        hideFeedback();
       }
     }
 
     function clearInput() {
       inputEl.value = '';
+      hideFeedback();
+    }
+
+    function hideFeedback() {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = '';
+    }
+
+    // Rejected or empty submission: show the message, shake, keep the text selected.
+    function rejectAnswer(message) {
+      feedbackEl.textContent = message;
+      feedbackEl.hidden = false;
+      frameEl.classList.remove('is-shaking');
+      void frameEl.offsetWidth;
+      frameEl.classList.add('is-shaking');
+      inputEl.focus({ preventScroll: true });
+      inputEl.select();
     }
 
     function startTimer(nowMs) {
@@ -100,11 +121,20 @@ window.Historically.Hud = (() => {
       event.preventDefault();
       if (!timerRunning || inputEl.disabled) return;
       const value = inputEl.value.trim();
-      if (!value) return;
+      if (!value) {
+        rejectAnswer('Type an answer first.');
+        return;
+      }
+      const accepted = onSubmit ? onSubmit(value) : false;
+      if (!accepted) {
+        rejectAnswer(`"${value}": not in the archives. Try again.`);
+        return;
+      }
       stopTimer();
       clearInput();
-      if (onSubmit) onSubmit(value);
     });
+
+    frameEl.addEventListener('animationend', () => frameEl.classList.remove('is-shaking'));
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', syncViewportOffset);
