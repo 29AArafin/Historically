@@ -302,7 +302,8 @@ async function getRedirects(titles, options) {
 
 // Optional per-prompt "stripPrefixes" (e.g. ['Battle of ']): also offer the
 // title and every redirect without that prefix, so "Battle of Waterloo"
-// gets "Waterloo". These go through exactly the same checks below.
+// gets "Waterloo". These go through the same checks below, except the
+// length check, so short place names like "Ulm" are kept.
 function withoutPrefixes(texts, prefixes = []) {
   const extra = [];
   for (const text of texts) {
@@ -334,10 +335,13 @@ function chooseAliases(answers, redirects, stripPrefixes) {
     answer.droppedAliases = [];
     const texts = redirects.get(answer.title);
     const shortForms = withoutPrefixes([answer.title, ...texts], stripPrefixes);
+    const shortKeys = new Set(shortForms.map(normalize));
     for (const text of [...texts, ...shortForms]) {
       const key = normalize(text);
       let reason = null;
-      if (key.length <= MAX_SHORT_ALIAS_LENGTH) reason = 'too short';
+      // Prefix short forms ("Ulm") skip the length check; only empty ones go.
+      const minLength = shortKeys.has(key) ? 1 : MAX_SHORT_ALIAS_LENGTH + 1;
+      if (key.length < minLength) reason = 'too short';
       else if (key.includes('disambiguation')) reason = 'disambiguation';
       else if (key.includes('list of')) reason = 'list of';
       else if (key === ownName) reason = 'same as the name';

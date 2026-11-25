@@ -168,7 +168,7 @@ window.Historically.PROMPTS_DATA = [
       { name: 'Battle of Talavera', tier: 'well', aliases: ['Battle of Talavera de la Reina (1809)', 'Battle of Talavera (1809)', 'Talavera', 'Talavera de la Reina'] },
       { name: 'Battle of Vitoria', tier: 'well', aliases: ['Vitoria'] },
       { name: 'Battle of Dresden', tier: 'well', aliases: ['Battle of Dresde', 'Dresden', 'Dresde'] },
-      { name: 'Battle of Ulm', tier: 'well', aliases: ['Convention of Ulm'] },
+      { name: 'Battle of Ulm', tier: 'well', aliases: ['Convention of Ulm', 'Ulm'] },
       { name: 'Battle of Corunna', tier: 'scholar', aliases: ['Battle of Elvina', 'Battle of La Coruña', 'Battle of La Corunna', 'Battle of Coruña', 'Battle of A Coruña', 'Battle of Elvinna', 'Coruña, Battle of', 'A Coruña, Battle of', 'Elviña', 'Retreat to Coruña', 'The Battle of Corunna', 'Corunna', 'La Coruña', 'La Corunna', 'Coruña', 'A Coruña', 'Elvinna'] },
       { name: 'Battle of Fleurus', tier: 'scholar', aliases: ['Fleurus'] },
       { name: 'Battle of Smolensk', tier: 'scholar', aliases: ['Smolensk'] },
