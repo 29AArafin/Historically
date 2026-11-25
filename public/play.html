@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <title>Playing — Historically</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/play.css">
+</head>
+<body>
+  <!-- Full-screen procedural pixel-art world stage -->
+  <div id="world-stage" class="world-stage">
+    <canvas id="world-canvas" class="world-canvas" aria-hidden="true"></canvas>
+
+    <!-- Tiny corner HUD: round counter top-left, logo center, score top-right -->
+    <nav class="game-hud" aria-label="Game status">
+      <span id="hud-round" class="hud-round">1/7</span>
+      <a class="hud-logo" href="index.html" aria-label="Back to home">HISTORICALLY</a>
+      <span id="hud-score" class="hud-score">SCORE 0</span>
+    </nav>
+
+    <!-- In-world floating prompt panel (notched pixel corners, scanline texture) -->
+    <div id="prompt-anchor" class="prompt-anchor is-hidden" aria-live="polite">
+      <div class="prompt-frame">
+        <div class="prompt-panel">
+          <p id="prompt-label" class="prompt-label">PROMPT 1 OF 7</p>
+          <h1 id="prompt-question" class="prompt-question">Loading…</h1>
+          <p class="prompt-hint">▼ rarer answers go further back ▼</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Falling answer chip (animated downward after submit) -->
+    <div id="falling-chip" class="falling-chip" hidden aria-hidden="true"></div>
+
+    <!-- Landing rarity tier label (shown briefly at the new depth) -->
+    <div id="landing-tier" class="landing-tier" hidden aria-hidden="true">
+      <p id="landing-tier-title" class="landing-tier__title"></p>
+      <p id="landing-tier-meta" class="landing-tier__meta"></p>
+    </div>
+
+    <!-- Bottom-docked answer input with thin pixel timer bar on top edge -->
+    <div id="answer-dock" class="answer-dock">
+      <div class="answer-timer-meta" id="timer-meta">
+        <span>TIMER</span>
+        <span id="timer-clock">0:25</span>
+      </div>
+      <div class="answer-frame">
+        <div class="answer-box">
+          <div class="timer-track">
+            <div id="timer-fill" class="timer-fill"></div>
+          </div>
+          <form id="answer-form" class="answer-form" action="javascript:void(0)">
+            <label for="answer-input" class="sr-only">Your answer</label>
+            <input
+              id="answer-input"
+              class="answer-input"
+              type="text"
+              placeholder="type a historical answer…"
+              autocomplete="off"
+              spellcheck="false"
+              disabled
+            >
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRT scanline overlay & fade curtain -->
+  <div class="crt-scanlines" aria-hidden="true"></div>
+  <div id="fade-curtain" class="fade-curtain" aria-hidden="true"></div>
+
+  <!-- Modular scripts: data → camera → canvas → hud → panel → game loop -->
+  <script src="js/game-data.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/world-canvas.js"></script>
+  <script src="js/hud.js"></script>
+  <script src="js/prompt-panel.js"></script>
+  <script src="js/game-loop.js"></script>
+</body>
+</html>

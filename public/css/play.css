@@ -1,0 +1,539 @@
+/* ==========================================================================
+   Historically — In-Game World Screen Styles
+   All colors stay within the shared 23-color pixel-art palette.
+   ========================================================================== */
+
+:root {
+  /* Core Palette */
+  --p-ink: #1a1d26;
+  --p-void: #140d12;
+  --p-cream: #fff8eb;
+  --p-mist: #d8e4ed;
+  --p-steel-mid: #7c8b99;
+  --p-steel-dark: #44505e;
+  --p-gold: #ffe885;
+  --p-brass: #e6c27a;
+  --p-brass-mid: #b88940;
+  --p-cyan: #72f5ff;
+  --p-cyan-mid: #26b6c9;
+  --p-pink: #f06595;
+  --p-grass: #6ab04c;
+  --p-pottery: #b55d42;
+
+  /* Typography */
+  --font-pixel-display: "Silkscreen", monospace;
+  --font-pixel-body: "VT323", "Silkscreen", monospace;
+
+  /* Dynamic viewport & safe-area offsets updated by hud.js */
+  --kb-offset: 0px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--p-void);
+  color: var(--p-cream);
+  font-family: var(--font-pixel-body);
+}
+
+/* --------------------------------------------------------------------------
+   Full-Screen Pixel World Stage
+   -------------------------------------------------------------------------- */
+.world-stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.world-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Full-screen CRT scanline overlay */
+.crt-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.9) 2px,
+    rgba(0, 0, 0, 0.9) 4px
+  );
+}
+
+/* Fade curtain between game end and results.html */
+.fade-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--p-void);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.fade-curtain.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Tiny Corner HUD (no container boxes)
+   -------------------------------------------------------------------------- */
+.game-hud {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding-inline: clamp(0.85rem, 3vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.hud-round,
+.hud-score {
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.72rem, 2vw, 0.88rem);
+  letter-spacing: 0.08em;
+  color: var(--p-cream);
+  text-shadow:
+    0 2px 0 var(--p-ink),
+    0 0 10px rgba(114, 245, 255, 0.45);
+}
+
+.hud-score {
+  color: var(--p-gold);
+  text-shadow:
+    0 2px 0 var(--p-ink),
+    0 0 10px rgba(255, 232, 133, 0.45);
+}
+
+/* Small logo with chromatic aberration (only logo & result text get this) */
+.hud-logo {
+  pointer-events: auto;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  color: var(--p-cream);
+  text-shadow:
+    -2px 0 0 var(--p-pink),
+    2px 0 0 var(--p-cyan),
+    0 2px 0 var(--p-ink);
+}
+
+.hud-logo:focus-visible {
+  outline: 2px solid var(--p-cyan);
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   In-World Prompt Panel (notched 5px steps, thin light border, scanlines)
+   -------------------------------------------------------------------------- */
+.prompt-anchor {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 20;
+  width: min(90vw, 33rem);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Outer frame provides the thin lighter border around the 5px notched polygon */
+.prompt-frame {
+  padding: 2px;
+  background-color: rgba(216, 228, 237, 0.55);
+  clip-path: polygon(
+    10px 0%,
+    calc(100% - 10px) 0%,
+    calc(100% - 10px) 5px,
+    calc(100% - 5px) 5px,
+    calc(100% - 5px) 10px,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 5px) calc(100% - 10px),
+    calc(100% - 5px) calc(100% - 5px),
+    calc(100% - 10px) calc(100% - 5px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    10px calc(100% - 5px),
+    5px calc(100% - 5px),
+    5px calc(100% - 10px),
+    0% calc(100% - 10px),
+    0% 10px,
+    5px 10px,
+    5px 5px,
+    10px 5px
+  );
+  filter: drop-shadow(0 10px 24px rgba(20, 13, 18, 0.72));
+}
+
+.prompt-panel {
+  position: relative;
+  padding: clamp(1rem, 3vw, 1.45rem) clamp(1rem, 3.5vw, 1.75rem);
+  background-color: rgba(20, 13, 18, 0.84);
+  text-align: center;
+  clip-path: polygon(
+    10px 0%,
+    calc(100% - 10px) 0%,
+    calc(100% - 10px) 5px,
+    calc(100% - 5px) 5px,
+    calc(100% - 5px) 10px,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 5px) calc(100% - 10px),
+    calc(100% - 5px) calc(100% - 5px),
+    calc(100% - 10px) calc(100% - 5px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    10px calc(100% - 5px),
+    5px calc(100% - 5px),
+    5px calc(100% - 10px),
+    0% calc(100% - 10px),
+    0% 10px,
+    5px 10px,
+    5px 5px,
+    10px 5px
+  );
+}
+
+/* Faint scanline texture inside the prompt panel */
+.prompt-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0) 2px,
+    rgba(255, 248, 235, 0.25) 2px,
+    rgba(255, 248, 235, 0.25) 4px
+  );
+}
+
+.prompt-label {
+  position: relative;
+  margin: 0 0 0.55rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.62rem, 1.8vw, 0.72rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+}
+
+.prompt-question {
+  position: relative;
+  margin: 0 auto 0.65rem;
+  max-width: 24ch;
+  font-family: var(--font-pixel-body);
+  font-weight: 400;
+  font-size: clamp(1.45rem, 4.4vw, 2.1rem);
+  line-height: 1.12;
+  color: var(--p-cream);
+  text-wrap: balance;
+}
+
+.prompt-hint {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.54rem, 1.5vw, 0.64rem);
+  letter-spacing: 0.06em;
+  color: var(--p-steel-mid);
+}
+
+/* Panel visibility states */
+.prompt-anchor.is-hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+.prompt-anchor.is-entering {
+  animation: panel-step-in 0.28s steps(4, end) forwards;
+}
+
+@keyframes panel-step-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 8px));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Falling Answer Chip & Landing Rarity Label
+   -------------------------------------------------------------------------- */
+.falling-chip {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 22;
+  padding: 0.35rem 0.85rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.75rem, 2.3vw, 0.92rem);
+  color: var(--p-ink);
+  background-color: var(--p-gold);
+  border: 2px solid var(--p-cream);
+  box-shadow: 0 4px 0 var(--p-ink);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 82vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.falling-chip[hidden] {
+  display: none;
+}
+
+.falling-chip.is-falling {
+  animation: chip-drop 1.15s steps(12, end) forwards;
+}
+
+@keyframes chip-drop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, 60px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 96px);
+  }
+}
+
+.landing-tier {
+  position: fixed;
+  left: 50%;
+  top: 44%;
+  z-index: 24;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.landing-tier[hidden] {
+  display: none;
+}
+
+/* Chromatic aberration allowed on result text */
+.landing-tier__title {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(1rem, 3.6vw, 1.45rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-cream);
+  text-shadow:
+    -2px 0 0 var(--p-pink),
+    2px 0 0 var(--p-cyan),
+    0 3px 0 var(--p-ink);
+}
+
+.landing-tier__meta {
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.68rem, 2vw, 0.82rem);
+  color: var(--p-gold);
+  text-shadow: 0 2px 0 var(--p-ink);
+}
+
+/* --------------------------------------------------------------------------
+   Bottom-Docked Answer Input + Top-Edge 25s Timer
+   -------------------------------------------------------------------------- */
+.answer-dock {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + var(--kb-offset));
+  z-index: 30;
+  width: min(92vw, 600px);
+  transform: translateX(-50%);
+}
+
+.answer-timer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 0.4rem;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-pixel-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--p-gold);
+  text-shadow: 0 2px 0 var(--p-ink);
+}
+
+.answer-timer-meta.is-urgent {
+  color: var(--p-pink);
+  animation: timer-pulse 0.65s steps(2, end) infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.answer-frame {
+  padding: 2px;
+  background-color: rgba(216, 228, 237, 0.58);
+  clip-path: polygon(
+    8px 0%,
+    calc(100% - 8px) 0%,
+    calc(100% - 8px) 4px,
+    calc(100% - 4px) 4px,
+    calc(100% - 4px) 8px,
+    100% 8px,
+    100% calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 8px) calc(100% - 4px),
+    calc(100% - 8px) 100%,
+    8px 100%,
+    8px calc(100% - 4px),
+    4px calc(100% - 4px),
+    4px calc(100% - 8px),
+    0% calc(100% - 8px),
+    0% 8px,
+    4px 8px,
+    4px 4px,
+    8px 4px
+  );
+  filter: drop-shadow(0 8px 18px rgba(20, 13, 18, 0.78));
+}
+
+.answer-box {
+  position: relative;
+  background-color: rgba(20, 13, 18, 0.92);
+  clip-path: polygon(
+    8px 0%,
+    calc(100% - 8px) 0%,
+    calc(100% - 8px) 4px,
+    calc(100% - 4px) 4px,
+    calc(100% - 4px) 8px,
+    100% 8px,
+    100% calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 8px) calc(100% - 4px),
+    calc(100% - 8px) 100%,
+    8px 100%,
+    8px calc(100% - 4px),
+    4px calc(100% - 4px),
+    4px calc(100% - 8px),
+    0% calc(100% - 8px),
+    0% 8px,
+    4px 8px,
+    4px 4px,
+    8px 4px
+  );
+}
+
+/* Thin pixel timer bar right along the top edge of the input */
+.timer-track {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(68, 80, 94, 0.65);
+}
+
+.timer-fill {
+  width: 100%;
+  height: 100%;
+  background-color: var(--p-gold);
+  transform-origin: left center;
+}
+
+.timer-fill.is-urgent {
+  background-color: var(--p-pink);
+  animation: timer-pulse 0.65s steps(2, end) infinite;
+}
+
+.answer-form {
+  display: flex;
+  align-items: center;
+}
+
+.answer-input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0.72rem 1rem 0.8rem;
+  font-family: var(--font-pixel-body);
+  font-size: clamp(1.35rem, 3.8vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--p-cream);
+  caret-color: var(--p-cyan);
+}
+
+.answer-input::placeholder {
+  color: var(--p-steel-mid);
+}
+
+.answer-input:focus {
+  outline: none;
+}
+
+.answer-frame:focus-within {
+  background-color: var(--p-cyan);
+}
+
+/* Visually hidden helper for accessible input label */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .prompt-anchor.is-entering,
+  .falling-chip.is-falling,
+  .answer-timer-meta.is-urgent,
+  .timer-fill.is-urgent {
+    animation: none;
+  }
+
+  .fade-curtain {
+    transition: none;
+  }
+}

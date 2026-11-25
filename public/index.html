@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historically — Daily History Trivia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+  <!-- Full-screen procedural pixel-art stage -->
+  <div id="scene-stage" class="scene-stage">
+    <canvas id="scene-canvas" class="scene-canvas" aria-hidden="true"></canvas>
+
+    <!-- Main landing overlay -->
+    <main class="landing-overlay">
+      <header class="hero-block">
+        <h1 class="hero-title">HISTORICALLY</h1>
+        <p class="hero-tagline">The rarer your answer, the further back you go.</p>
+        <p class="hero-stats">7 prompts · 25 seconds each · one journey per day</p>
+
+        <div class="hero-actions">
+          <div class="pixel-btn-wrap">
+            <a id="begin-btn" class="pixel-btn" href="play.html">Begin Journey</a>
+          </div>
+          <button
+            id="how-toggle"
+            class="how-toggle"
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="how-modal"
+          >
+            How to play
+          </button>
+        </div>
+      </header>
+    </main>
+  </div>
+
+  <!-- How to play modal -->
+  <div
+    id="how-modal"
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-modal-title"
+    hidden
+  >
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="how-modal-title" class="modal-title">How to play</h2>
+        <button id="modal-close" class="modal-close" type="button" aria-label="Close modal">X</button>
+      </div>
+      <ol class="modal-steps">
+        <li class="modal-step">
+          <span class="modal-step__num" aria-hidden="true">1</span>
+          <div>
+            <h3 class="modal-step__heading">Answer</h3>
+            <p class="modal-step__text">Type one answer for each of the 7 daily prompts before the 25-second clock runs out.</p>
+          </div>
+        </li>
+        <li class="modal-step">
+          <span class="modal-step__num" aria-hidden="true">2</span>
+          <div>
+            <h3 class="modal-step__heading">Get graded by rarity</h3>
+            <p class="modal-step__text">Obvious picks score little. Obscure but correct answers earn rare tiers and bigger leaps.</p>
+          </div>
+        </li>
+        <li class="modal-step">
+          <span class="modal-step__num" aria-hidden="true">3</span>
+          <div>
+            <h3 class="modal-step__heading">Travel back in time</h3>
+            <p class="modal-step__text">Start in the present and plunge deeper through the eras with every rare answer.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- CRT scanline overlay & transition curtain -->
+  <div class="crt-scanlines" aria-hidden="true"></div>
+  <div id="fade-curtain" class="fade-curtain" aria-hidden="true"></div>
+
+  <script src="js/scene.js"></script>
+</body>
+</html>

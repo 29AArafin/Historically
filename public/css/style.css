@@ -1,0 +1,750 @@
+/* ==========================================================================
+   Historically — Shared Stylesheet
+   Sections:
+     1. Variables
+     2. Base
+     3. Layout
+     4. Components
+     5. Pages
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Variables
+   -------------------------------------------------------------------------- */
+:root {
+  /* Page background gradient: deep navy (present) to warm sepia/amber (past) */
+  --bg-top: #0b1324;
+  --bg-mid: #1f2233;
+  --bg-bottom: #4e331c;
+
+  /* Surface and border colours */
+  --surface-card: rgba(15, 22, 39, 0.84);
+  --surface-card-soft: rgba(21, 30, 52, 0.72);
+  --surface-input: #0b111f;
+  --border-subtle: rgba(226, 182, 89, 0.22);
+  --border-strong: rgba(226, 182, 89, 0.5);
+
+  /* Text colours (all tuned for WCAG AA contrast) */
+  --text-primary: #f5efe6;
+  --text-muted: #cfc4b2;
+  --text-accent: #eab95c;
+
+  /* Interactive button colours */
+  --accent-brass: #e2b659;
+  --accent-brass-hover: #f0c975;
+  --accent-brass-text: #0b1324;
+  --focus-ring: #f7d98e;
+
+  /* Rarity tier colours: cool/modern -> warm/ancient */
+  --tier-common-bg: #1b385c;
+  --tier-common-border: #6094db;
+  --tier-common-text: #e6f0ff;
+
+  --tier-well-bg: #154546;
+  --tier-well-border: #44b5a9;
+  --tier-well-text: #e0fbf7;
+
+  --tier-scholar-bg: #493813;
+  --tier-scholar-border: #d9a743;
+  --tier-scholar-text: #fef3d1;
+
+  --tier-archivist-bg: #582a13;
+  --tier-archivist-border: #e37e45;
+  --tier-archivist-text: #ffeadc;
+
+  --tier-lost-bg: #5e1d24;
+  --tier-lost-border: #e66a6a;
+  --tier-lost-text: #ffe5e5;
+
+  /* Typography */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.75rem;
+
+  /* Border radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-pill: 999px;
+
+  /* Widths */
+  --container-max: 40rem; /* 640px */
+}
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+  background-color: var(--bg-top);
+  background-image: linear-gradient(
+    180deg,
+    var(--bg-top) 0%,
+    var(--bg-mid) 48%,
+    var(--bg-bottom) 100%
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+p {
+  margin-top: 0;
+}
+
+a {
+  color: var(--text-accent);
+}
+
+/* Clear, high-contrast keyboard focus outline */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Layout
+   -------------------------------------------------------------------------- */
+.page-header,
+.page-main,
+.page-footer {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.page-header {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-4);
+}
+
+.page-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-bottom: var(--space-6);
+}
+
+.page-footer {
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.page-footer p {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Components
+   -------------------------------------------------------------------------- */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  text-decoration: none;
+  margin-bottom: var(--space-2);
+}
+
+.card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.section-heading {
+  font-size: 1.35rem;
+  margin-bottom: var(--space-4);
+}
+
+/* Primary and secondary buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.875rem;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn--primary {
+  background-color: var(--accent-brass);
+  color: var(--accent-brass-text);
+}
+
+.btn--primary:hover {
+  background-color: var(--accent-brass-hover);
+}
+
+.btn--secondary {
+  background-color: var(--surface-card-soft);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn--secondary:hover {
+  background-color: rgba(226, 182, 89, 0.14);
+}
+
+.btn--large {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  font-size: 1.0625rem;
+}
+
+/* Rarity tier badges (cool/modern to warm/ancient) */
+.tier-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  border: 1px solid transparent;
+}
+
+.tier-badge--common {
+  background-color: var(--tier-common-bg);
+  border-color: var(--tier-common-border);
+  color: var(--tier-common-text);
+}
+
+.tier-badge--well {
+  background-color: var(--tier-well-bg);
+  border-color: var(--tier-well-border);
+  color: var(--tier-well-text);
+}
+
+.tier-badge--scholar {
+  background-color: var(--tier-scholar-bg);
+  border-color: var(--tier-scholar-border);
+  color: var(--tier-scholar-text);
+}
+
+.tier-badge--archivist {
+  background-color: var(--tier-archivist-bg);
+  border-color: var(--tier-archivist-border);
+  color: var(--tier-archivist-text);
+}
+
+.tier-badge--lost {
+  background-color: var(--tier-lost-bg);
+  border-color: var(--tier-lost-border);
+  color: var(--tier-lost-text);
+}
+
+/* --------------------------------------------------------------------------
+   5. Pages
+   -------------------------------------------------------------------------- */
+
+/* --- Home page (index.html) --- */
+.hero {
+  text-align: center;
+}
+
+.hero__title {
+  font-size: clamp(2.25rem, 8vw, 3.25rem);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-2);
+}
+
+.hero__tagline {
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.journey-card {
+  text-align: center;
+  border-color: var(--border-strong);
+}
+
+.journey-card__eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-accent);
+  margin-bottom: var(--space-2);
+}
+
+.journey-card__title {
+  font-size: 1.6rem;
+  margin-bottom: var(--space-2);
+}
+
+.journey-card__meta {
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+
+.steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4);
+  background-color: var(--surface-card-soft);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.step-item__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--text-accent);
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.step-item__title {
+  font-size: 1.05rem;
+  margin-bottom: var(--space-1);
+}
+
+.step-item__desc {
+  margin-bottom: 0;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.tier-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.tier-legend__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tier-legend__item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.tier-legend__stats {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+/* --- Play page (play.html) --- */
+.play-topbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.play-topbar__progress {
+  font-weight: 700;
+}
+
+.play-topbar__score {
+  font-weight: 700;
+  color: var(--text-accent);
+  text-align: right;
+}
+
+.timer {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.timer__label {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timer__track {
+  height: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.timer__bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-brass), #e07b42);
+  transform-origin: left center;
+  animation: timer-shrink 25s linear forwards;
+}
+
+@keyframes timer-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.play-layout {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.prompt-card {
+  border-color: var(--border-strong);
+}
+
+.prompt-card__era {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-accent);
+  margin-bottom: var(--space-2);
+}
+
+.prompt-card__question {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  margin-bottom: var(--space-5);
+}
+
+.answer-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.answer-form__label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.answer-form__input {
+  width: 100%;
+  min-height: 3rem;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--surface-input);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+}
+
+.answer-form__input::placeholder {
+  color: #9e9384;
+}
+
+/* Time gauge: compact horizontal strip on mobile */
+.time-gauge__title {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-accent);
+  margin-bottom: var(--space-3);
+}
+
+.gauge-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.gauge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-card-soft);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.8125rem;
+}
+
+.gauge-item__year {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gauge-item__era {
+  color: var(--text-muted);
+}
+
+.gauge-item--current {
+  background-color: rgba(226, 182, 89, 0.2);
+  border-color: var(--accent-brass);
+  box-shadow: 0 0 14px rgba(226, 182, 89, 0.45);
+}
+
+.gauge-item--current .gauge-item__year,
+.gauge-item--current .gauge-item__era {
+  color: #fef3d1;
+  font-weight: 700;
+}
+
+/* --- Results page (results.html) --- */
+.results-hero {
+  text-align: center;
+}
+
+.results-hero__title {
+  font-size: clamp(1.85rem, 6vw, 2.5rem);
+  margin-bottom: var(--space-4);
+}
+
+.results-stats {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.stat-box {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.stat-box__label {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.stat-box__value {
+  margin-bottom: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 4.5vw, 1.75rem);
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+/* Vertical timeline on results page */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-5);
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  width: 2px;
+  background: linear-gradient(180deg, var(--tier-common-border), var(--tier-lost-border));
+}
+
+.timeline-node {
+  position: relative;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.timeline-node::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-5) + 0.18rem);
+  top: 1.25rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background-color: var(--accent-brass);
+  border: 2px solid var(--bg-top);
+  box-shadow: 0 0 0 2px var(--border-strong);
+}
+
+.timeline-node__prompt {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.timeline-node__answer {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.timeline-node__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: 0.9375rem;
+}
+
+.timeline-node__points {
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+.timeline-node__year {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.results-actions {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive & Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (min-width: 40rem) {
+  .results-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .results-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Two-column play view with vertical time gauge on desktop */
+  .play-layout {
+    grid-template-columns: 1fr 13.5rem;
+    align-items: start;
+  }
+
+  .gauge-list {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+  }
+
+  .gauge-list::before {
+    content: "";
+    position: absolute;
+    left: 0.3rem;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 2px;
+    background: linear-gradient(180deg, var(--tier-common-border), var(--tier-lost-border));
+  }
+
+  .gauge-item {
+    position: relative;
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .gauge-item::before {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--space-4) + 0.08rem);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+  }
+
+  .gauge-item--current::before {
+    width: 0.72rem;
+    height: 0.72rem;
+    left: calc(-1 * var(--space-4) - 0.03rem);
+    background-color: var(--accent-brass);
+    box-shadow: 0 0 10px var(--accent-brass);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer__bar {
+    animation: none;
+  }
+
+  .btn {
+    transition: none;
+  }
+}

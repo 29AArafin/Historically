@@ -1,0 +1,376 @@
+/* ==========================================================================
+   Historically — Pixel-Art Landing Page Styles
+   ========================================================================== */
+
+:root {
+  /* UI & Pixel Palette */
+  --ui-ink: #1a1d26;
+  --ui-cream: #fff8eb;
+  --ui-sky: #a8d0e6;
+  --ui-gold: #ffe885;
+  --ui-gold-dark: #b88940;
+  --ui-cyan: #72f5ff;
+  --ui-pink: #ff4fd8;
+  --ui-panel: #140d12;
+
+  /* Typography */
+  --font-pixel-display: "Silkscreen", monospace;
+  --font-pixel-body: "VT323", "Silkscreen", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #140d12;
+  color: var(--ui-cream);
+  font-family: var(--font-pixel-body);
+}
+
+/* --------------------------------------------------------------------------
+   Full-screen Pixel Canvas
+   -------------------------------------------------------------------------- */
+.scene-stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.scene-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Screen shake played briefly when "Begin Journey" is clicked */
+.scene-stage.is-shaking {
+  animation: pixel-shake 0.36s steps(4, end);
+}
+
+@keyframes pixel-shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-4px, 3px); }
+  50% { transform: translate(4px, -3px); }
+  75% { transform: translate(-3px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Fade to dark before transitioning to play.html */
+.fade-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background-color: #0b1324;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.fade-curtain.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Full-screen CRT Scanline Overlay
+   -------------------------------------------------------------------------- */
+.crt-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0.1;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.85) 2px,
+    rgba(0, 0, 0, 0.85) 4px
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Hero Overlay (sits in the upper sky above the time machine & tree)
+   -------------------------------------------------------------------------- */
+.landing-overlay {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1rem, 4vh, 2.75rem) 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-block {
+  max-width: 38rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.hero-title {
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-weight: 700;
+  font-size: clamp(1.85rem, 6.2vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  color: var(--ui-cream);
+  /* Chromatic aberration effect: 3px pink left, 3px cyan right, plus crisp drop */
+  text-shadow:
+    -3px 0 0 var(--ui-pink),
+    3px 0 0 var(--ui-cyan),
+    0 4px 0 var(--ui-ink);
+}
+
+.hero-tagline {
+  margin: 0;
+  max-width: 22rem;
+  font-family: var(--font-pixel-body);
+  font-size: clamp(1.2rem, 3.4vw, 1.65rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--ui-ink);
+  text-shadow:
+    1px 0 0 rgba(255, 248, 235, 0.85),
+    -1px 0 0 rgba(255, 248, 235, 0.85),
+    0 1px 0 rgba(255, 248, 235, 0.85),
+    0 -1px 0 rgba(255, 248, 235, 0.85);
+}
+
+.hero-stats {
+  margin: 0;
+  padding: 0.25rem 0.65rem;
+  font-family: var(--font-pixel-display);
+  font-size: clamp(0.56rem, 1.8vw, 0.78rem);
+  line-height: 1.35;
+  text-wrap: balance;
+  letter-spacing: 0.02em;
+  color: var(--ui-cream);
+  background-color: rgba(26, 29, 38, 0.88);
+  border: 2px solid var(--ui-ink);
+}
+
+/* --------------------------------------------------------------------------
+   Chunky Pixel Button (stepped clip-path polygon + 2px border)
+   -------------------------------------------------------------------------- */
+.hero-actions {
+  margin-top: 0.55rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.pixel-btn-wrap {
+  display: inline-block;
+  /* Crisp 2px outer outline around the stepped notched polygon */
+  filter:
+    drop-shadow(2px 0 0 var(--ui-ink))
+    drop-shadow(-2px 0 0 var(--ui-ink))
+    drop-shadow(0 2px 0 var(--ui-ink))
+    drop-shadow(0 -2px 0 var(--ui-ink))
+    drop-shadow(0 4px 0 rgba(20, 13, 18, 0.55));
+}
+
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.78rem 1.7rem;
+  font-family: var(--font-pixel-display);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ui-ink);
+  background-color: var(--ui-gold);
+  border: 2px solid var(--ui-cream);
+  cursor: pointer;
+  /* Stepped notched corners */
+  clip-path: polygon(
+    6px 0%,
+    calc(100% - 6px) 0%,
+    calc(100% - 6px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 6px) calc(100% - 4px),
+    calc(100% - 6px) 100%,
+    6px 100%,
+    6px calc(100% - 4px),
+    0% calc(100% - 4px),
+    0% 4px,
+    6px 4px
+  );
+  box-shadow: inset 0 -4px 0 var(--ui-gold-dark);
+  transition: transform 0.08s steps(2), background-color 0.12s ease;
+}
+
+.pixel-btn:hover {
+  background-color: #fff0a8;
+  transform: translateY(-2px);
+}
+
+.pixel-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 -2px 0 var(--ui-gold-dark);
+}
+
+.pixel-btn:focus-visible,
+.how-toggle:focus-visible,
+.modal-close:focus-visible {
+  outline: 3px solid var(--ui-cyan);
+  outline-offset: 4px;
+}
+
+.how-toggle {
+  background-color: rgba(26, 29, 38, 0.78);
+  color: var(--ui-cream);
+  border: 2px solid var(--ui-cream);
+  padding: 0.35rem 0.8rem;
+  font-family: var(--font-pixel-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.how-toggle:hover {
+  background-color: var(--ui-ink);
+  color: var(--ui-cyan);
+  border-color: var(--ui-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   How to Play Modal
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background-color: rgba(11, 19, 36, 0.84);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 1.25rem;
+  background-color: var(--ui-panel);
+  border: 3px solid var(--ui-gold);
+  box-shadow:
+    0 0 0 3px var(--ui-ink),
+    0 14px 32px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid rgba(255, 232, 133, 0.3);
+}
+
+.modal-title {
+  margin: 0;
+  font-family: var(--font-pixel-display);
+  font-size: 1rem;
+  color: var(--ui-gold);
+  text-transform: uppercase;
+}
+
+.modal-close {
+  background-color: var(--ui-ink);
+  color: var(--ui-cream);
+  border: 2px solid var(--ui-cream);
+  padding: 0.25rem 0.55rem;
+  font-family: var(--font-pixel-display);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--ui-cyan);
+  border-color: var(--ui-cyan);
+}
+
+.modal-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.modal-step {
+  display: grid;
+  grid-template-columns: 1.85rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+}
+
+.modal-step__num {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  font-family: var(--font-pixel-display);
+  font-size: 0.8rem;
+  color: var(--ui-ink);
+  background-color: var(--ui-cyan);
+  border: 2px solid var(--ui-cream);
+}
+
+.modal-step__heading {
+  margin: 0 0 0.15rem;
+  font-family: var(--font-pixel-display);
+  font-size: 0.82rem;
+  color: var(--ui-cream);
+}
+
+.modal-step__text {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.15;
+  color: var(--ui-sky);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .scene-stage.is-shaking {
+    animation: none;
+  }
+
+  .pixel-btn,
+  .fade-curtain {
+    transition: none;
+  }
+}
