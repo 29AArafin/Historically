@@ -9,7 +9,7 @@
 
   const { GameData, Eras, SceneRenderer, TimeTravel, Hud, PromptPanel, AudioFX } = window.Historically;
   const TOTAL_ROUNDS = 7;
-  const TITLE_CARD_MS = 1200;
+  const TIER_REVEAL_DELAY_MS = 500;
   const COMPACT_LAYOUT_WIDTH = 780;
 
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -41,7 +41,8 @@
   let currentEra = Eras.eraIndexForYear(currentYear);
   let roundInProgress = false;
   let pendingTier = null;
-  let advanceTimeout = null;
+  let pendingAnswer = '';
+  let advanceWhenIdle = false;
   let resizeTimeout = null;
   const roundResults = [];
 
@@ -65,6 +66,10 @@
     onComplete: () => {
       travelCounterEl.hidden = true;
       travelCounterEl.classList.remove('is-rolling');
+      if (advanceWhenIdle) {
+        advanceWhenIdle = false;
+        advanceAfterArrival();
+      }
     },
   });
 
@@ -94,6 +99,7 @@
 
     const bottom = hud.getAvailableBottomY();
     panel.updatePosition(window.innerHeight * 0.34, bottom, world.getMachineScreenTop());
+    panel.positionLandingTier(world.getMachineScreenTop());
 
     requestAnimationFrame(renderLoop);
   }
@@ -170,6 +176,7 @@
     });
 
     pendingTier = tier;
+    pendingAnswer = answerText;
     AudioFX.unlock();
     const started = travel.travelTo(destinationEra, newYear);
     if (!started) {
@@ -193,14 +200,26 @@
     updateEraHud();
     AudioFX.playArrive();
 
-    panel.showLandingTier(tier, era, GameData.formatYear(currentYear), reduceMotion);
+    panel.showLandingTier({
+      tier,
+      era,
+      answer: pendingAnswer,
+      yearText: GameData.formatYear(currentYear),
+      delayMs: TIER_REVEAL_DELAY_MS,
+      onContinue: continueAfterReveal,
+    });
+  }
 
-    if (advanceTimeout) clearTimeout(advanceTimeout);
-    advanceTimeout = setTimeout(advanceAfterArrival, reduceMotion ? 900 : TITLE_CARD_MS);
+  // The arrive phase can outlast the reveal; wait for it so the next jump can start.
+  function continueAfterReveal() {
+    if (travel.state.phase !== 'idle') {
+      advanceWhenIdle = true;
+      return;
+    }
+    advanceAfterArrival();
   }
 
   function advanceAfterArrival() {
-    advanceTimeout = null;
     panel.hideLandingTier();
     currentRound++;
     if (currentRound >= TOTAL_ROUNDS) {

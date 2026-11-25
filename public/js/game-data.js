@@ -18,6 +18,7 @@ window.Historically.GameData = (() => {
       shortLabel: 'COMMON',
       points: 10,
       yearsBack: 20,
+      flavour: 'Everyone has been here. Barely a step back.',
     },
     well: {
       key: 'well',
@@ -25,6 +26,7 @@ window.Historically.GameData = (() => {
       shortLabel: 'WELL KNOWN',
       points: 30,
       yearsBack: 100,
+      flavour: 'A familiar road into the past.',
     },
     scholar: {
       key: 'scholar',
@@ -32,6 +34,7 @@ window.Historically.GameData = (() => {
       shortLabel: "SCHOLAR'S PICK",
       points: 55,
       yearsBack: 300,
+      flavour: 'Sharp recall. The centuries slip by.',
     },
     archivist: {
       key: 'archivist',
@@ -39,6 +42,7 @@ window.Historically.GameData = (() => {
       shortLabel: "ARCHIVIST'S FIND",
       points: 80,
       yearsBack: 800,
+      flavour: 'Buried deep. Few ever dig this far.',
     },
     lost: {
       key: 'lost',
@@ -46,6 +50,7 @@ window.Historically.GameData = (() => {
       shortLabel: 'LOST TO TIME',
       points: 100,
       yearsBack: 2000,
+      flavour: 'Almost nobody remembers this. Welcome to the ancient past.',
     },
     timeout: {
       key: 'timeout',
@@ -53,6 +58,7 @@ window.Historically.GameData = (() => {
       shortLabel: 'TIME UP',
       points: 0,
       yearsBack: 0,
+      flavour: 'The clock ran out. The machine stayed put.',
     },
   };
 
