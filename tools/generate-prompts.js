@@ -341,7 +341,7 @@ function surnameOf(name) {
  * Duplicates within one answer are kept once. Every drop is recorded with its
  * reason in answer.droppedAliases for the review report.
  */
-function chooseAliases(answers, redirects, stripPrefixes) {
+function chooseAliases(answers, redirects, stripPrefixes, useSurnames = true) {
   // Pass 1: checks that only need the answer itself.
   for (const answer of answers) {
     const ownName = normalize(answer.name);
@@ -350,7 +350,7 @@ function chooseAliases(answers, redirects, stripPrefixes) {
     const texts = redirects.get(answer.title);
     const shortForms = withoutPrefixes([answer.title, ...texts], stripPrefixes);
     const shortKeys = new Set(shortForms.map(normalize));
-    const surname = surnameOf(answer.name);
+    const surname = useSurnames ? surnameOf(answer.name) : null;
     for (const text of [...texts, ...shortForms, ...(surname ? [surname] : [])]) {
       const key = normalize(text);
       let reason = null;
@@ -426,7 +426,7 @@ async function buildPrompt(prompt, options, range) {
 
   console.log(`  Fetching redirects for ${answers.length} answers…`);
   const redirects = await getRedirects(answers.map((a) => a.title), options);
-  chooseAliases(answers, redirects, prompt.stripPrefixes);
+  chooseAliases(answers, redirects, prompt.stripPrefixes, prompt.surnames !== false);
 
   return { prompt, answers, cutByMax, skippedNoArticle };
 }

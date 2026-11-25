@@ -15,6 +15,8 @@
                  ones (default 60)
      stripPrefixes  optional; e.g. ['Battle of ']. Also offers each title and
                  redirect without that prefix as an alias ("Waterloo").
+     surnames    optional; set to false for prompts that aren't people, so the
+                 last word of a name ("Walcheren Campaign") isn't an alias.
 
    Every query below gets ?article the same way (the ?sitelink lines).
    "wikibase:sitelinks" = how many Wikipedias have an article on the item;
@@ -77,6 +79,7 @@ module.exports = [
     `,
     maxAnswers: 60,
     stripPrefixes: ['Battle of the ', 'Battle of '],
+    surnames: false,
   },
 
   {

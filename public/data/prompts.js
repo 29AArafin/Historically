@@ -190,7 +190,7 @@ window.Historically.PROMPTS_DATA = [
       { name: 'Battle of Bautzen', tier: 'archivist', aliases: ['Battle of Budziszyn', 'Bautzen', 'Budziszyn'] },
       { name: 'Capture of the Dutch fleet at Den Helder', tier: 'archivist', aliases: ['Battle of Texel (1795)', 'Texel'] },
       { name: 'Battle of Barrosa', tier: 'archivist', aliases: ['Battle of Barossa', 'Battle of Barrossa', 'Battle of Chiclana', 'The Battle of Barrosa', 'Barrosa', 'Barossa', 'Barrossa', 'Chiclana'] },
-      { name: 'Walcheren Campaign', tier: 'archivist', aliases: ['Walcheren Expedition', 'Expedition to Walcheren', 'Campaign'] },
+      { name: 'Walcheren Campaign', tier: 'archivist', aliases: ['Walcheren Expedition', 'Expedition to Walcheren'] },
       { name: 'Battle of Blaauwberg', tier: 'archivist', aliases: ['Battle of Cape Town', 'Battle of Blaauw Berg', 'Battle of Blouberg', 'Blaauwberg', 'Cape Town', 'Blaauw Berg', 'Blouberg'] },
       { name: 'Battle of Vimeiro', tier: 'archivist', aliases: ['Battle of Vimiero', 'Battle of Vimiera', 'Battle of Vimeira', 'Vimeiro', 'Vimiero', 'Vimiera', 'Vimeira'] },
       { name: 'Battle of Lissa', tier: 'lost', aliases: ['Lissa'] },
