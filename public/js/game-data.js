@@ -62,77 +62,67 @@ window.Historically.GameData = (() => {
     },
   };
 
-  // Daily 7 prompts with sample rarity lookup lists
-  const PROMPTS = [
-    {
-      question: 'Name a Roman emperor',
-      common: ['nero', 'augustus', 'caesar', 'julius caesar', 'caligula', 'constantine', 'trajan', 'hadrian', 'marcus aurelius'],
-      well: ['tiberius', 'claudius', 'vespasian', 'titus', 'domitian', 'commodus', 'diocletian', 'septimius severus'],
-      scholar: ['nerva', 'antoninus pius', 'caracalla', 'aurelian', 'julian', 'justinian', 'theodosius'],
-      archivist: ['galba', 'otho', 'vitellius', 'pertinax', 'elagabalus', 'gallienus', 'probus', 'valerian'],
-    },
-    {
-      question: 'Name a famous explorer',
-      common: ['columbus', 'christopher columbus', 'magellan', 'ferdinand magellan', 'marco polo', 'vasco da gama', 'cook', 'james cook'],
-      well: ['drake', 'francis drake', 'vespucci', 'amerigo vespucci', 'cortes', 'leif erikson', 'amundsen', 'shackleton'],
-      scholar: ['cartier', 'jacques cartier', 'hudson', 'henry hudson', 'cabot', 'tasman', 'ibn battuta'],
-      archivist: ['zheng he', 'pytheas', 'hanno', 'xuanzang', 'zhang qian', 'bering', 'vitus bering'],
-    },
-    {
-      question: 'Name a battle from the Napoleonic Wars',
-      common: ['waterloo', 'trafalgar'],
-      well: ['austerlitz', 'borodino', 'leipzig', 'jena'],
-      scholar: ['wagram', 'marengo', 'friedland', 'eylau', 'ulm', 'salamanca'],
-      archivist: ['auerstedt', 'rivoli', 'aspern', 'essling', 'bautzen', 'lutzen', 'talavera'],
-    },
-    {
-      question: 'Name a female ruler from before 1500',
-      common: ['cleopatra', 'joan of arc', 'boudica', 'boudicca'],
-      well: ['hatshepsut', 'nefertiti', 'eleanor of aquitaine', 'isabella', 'empress dowager'],
-      scholar: ['wu zetian', 'theodora', 'zenobia', 'tomoe gozen', 'aethelflaed'],
-      archivist: ['enheduanna', 'pulcheria', 'irene of athens', 'tamar', 'razzia', 'razia sultana', 'himiko'],
-    },
-    {
-      question: 'Name a scientist from before 1700',
-      common: ['galileo', 'galileo galilei', 'newton', 'isaac newton', 'archimedes', 'da vinci', 'leonardo da vinci', 'copernicus'],
-      well: ['kepler', 'johannes kepler', 'boyle', 'robert boyle', 'hooke', 'robert hooke', 'pascal', 'harvey', 'aristotle'],
-      scholar: ['tycho brahe', 'brahe', 'eratosthenes', 'hypatia', 'al-khwarizmi', 'avicenna', 'ibn sina'],
-      archivist: ['ibn al-haytham', 'alhazen', 'shen kuo', 'zhang heng', 'aryabhata', 'brahmagupta', 'al-biruni'],
-    },
-    {
-      question: 'Name a Greek philosopher',
-      common: ['socrates', 'plato', 'aristotle'],
-      well: ['pythagoras', 'epicurus', 'diogenes', 'democritus', 'heraclitus'],
-      scholar: ['thales', 'zeno', 'parmenides', 'empedocles', 'protagoras', 'gorgias'],
-      archivist: ['hippias', 'chrysippus', 'pyrrho', 'speusippus', 'xenophanes', 'antisthenes'],
-    },
-    {
-      question: 'Name an Egyptian pharaoh',
-      common: ['tutankhamun', 'king tut', 'tut', 'cleopatra', 'ramses', 'ramesses', 'ramesses ii'],
-      well: ['khufu', 'cheops', 'hatshepsut', 'akhenaten', 'khafre', 'menkaure'],
-      scholar: ['thutmose iii', 'thutmose', 'seti i', 'amenhotep iii', 'djoser', 'narmer'],
-      archivist: ['sneferu', 'senusret', 'amentemhat', 'psamtik', 'mentuhotep', 'horemheb'],
-    },
-  ];
+  // Prompts and accepted answers live in data/prompts.js.
+  const PROMPTS = window.Historically.PROMPTS_DATA || [];
 
+  // Trim, lowercase, strip accents and punctuation, collapse spaces.
+  // Hyphens, slashes and underscores count as spaces ("Ku-Baba" -> "ku baba").
   function normalize(text) {
-    return text.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, ' ');
+    return String(text || '')
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/æ/g, 'ae')
+      .replace(/œ/g, 'oe')
+      .replace(/[-_/]/g, ' ')
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
-  function gradeAnswer(roundIndex, rawAnswer) {
-    const clean = normalize(rawAnswer);
-    if (!clean) {
-      return TIERS.timeout;
+  // Per prompt: normalised name or alias -> answer entry. Built on first use.
+  const answerIndex = new Map();
+
+  function getAnswerIndex(promptId) {
+    if (answerIndex.has(promptId)) return answerIndex.get(promptId);
+    const prompt = PROMPTS.find((p) => p.id === promptId);
+    const index = new Map();
+    if (prompt) {
+      prompt.answers.forEach((entry) => {
+        [entry.name, ...(entry.aliases || [])].forEach((label) => {
+          const key = normalize(label);
+          if (key && !index.has(key)) index.set(key, entry);
+        });
+      });
     }
+    answerIndex.set(promptId, index);
+    return index;
+  }
 
-    const prompt = PROMPTS[roundIndex] || PROMPTS[0];
-    if (prompt.common.includes(clean)) return TIERS.common;
-    if (prompt.well.includes(clean)) return TIERS.well;
-    if (prompt.scholar.includes(clean)) return TIERS.scholar;
-    if (prompt.archivist.includes(clean)) return TIERS.archivist;
-
-    // Very short answers default to Scholar's Pick; distinct obscure answers earn Lost to Time
-    return clean.length < 4 ? TIERS.scholar : TIERS.lost;
+  /*
+   * Checks a raw answer against the CURRENT prompt's accepted answers only.
+   * The whole normalised input must equal a normalised name or alias, so
+   * partial text and substrings never match.
+   *
+   * Returns { valid: true, answer, tier } or { valid: false }.
+   *   answer: the dataset display name; tier: an entry from TIERS.
+   *
+   * Examples (prompt 'explorer'):
+   *   checkAnswer('explorer', 'Zheng He')      -> { valid: true, answer: 'Zheng He', tier: TIERS.archivist }  exact
+   *   checkAnswer('explorer', 'cheng ho')      -> { valid: true, answer: 'Zheng He', tier: TIERS.archivist }  alias
+   *   checkAnswer('explorer', '  MAGELLAN ')   -> { valid: true, answer: 'Ferdinand Magellan', tier: TIERS.common }  case/spacing
+   *   checkAnswer('explorer', 'hernan cortes') -> { valid: true, answer: 'Hernán Cortés', tier: TIERS.well }  accents
+   *   checkAnswer('explorer', 'magel')         -> { valid: false }  partial text
+   *   checkAnswer('explorer', 'spanish s')     -> { valid: false }  not in dataset
+   *   checkAnswer('explorer', 'Nero')          -> { valid: false }  answer from another prompt
+   *   checkAnswer('explorer', '   ')           -> { valid: false }  empty input
+   */
+  function checkAnswer(promptId, rawInput) {
+    const key = normalize(rawInput);
+    if (!key) return { valid: false };
+    const entry = getAnswerIndex(promptId).get(key);
+    if (!entry || !TIERS[entry.tier]) return { valid: false };
+    return { valid: true, answer: entry.name, tier: TIERS[entry.tier] };
   }
 
   function formatYear(year) {
@@ -150,7 +140,8 @@ window.Historically.GameData = (() => {
     START_YEAR,
     PROMPTS,
     TIERS,
-    gradeAnswer,
+    normalize,
+    checkAnswer,
     formatYear,
   };
 })();

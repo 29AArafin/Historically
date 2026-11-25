@@ -148,8 +148,16 @@
     refreshTimelineVisibility();
   }
 
+  // Returns true when the answer is accepted; rejected answers leave the round running.
   function handleAnswer(answerText) {
-    if (!roundInProgress) return;
+    if (!roundInProgress) return false;
+    const result = GameData.checkAnswer(GameData.PROMPTS[currentRound].id, answerText);
+    if (!result.valid) return false;
+    finishRound(result.tier, answerText);
+    return true;
+  }
+
+  function finishRound(tier, answerText) {
     roundInProgress = false;
 
     hud.stopTimer();
@@ -157,7 +165,6 @@
     panel.snapShut();
     refreshTimelineVisibility();
 
-    const tier = GameData.gradeAnswer(currentRound, answerText);
     const newYear = currentYear - tier.yearsBack;
     const destinationEra = Eras.eraIndexForYear(newYear);
     const yearText = GameData.formatYear(newYear);
@@ -231,7 +238,7 @@
 
   function handleTimeout() {
     if (!roundInProgress) return;
-    handleAnswer('');
+    finishRound(GameData.TIERS.timeout, '');
   }
 
   function endGame() {
